@@ -33,6 +33,9 @@ const selectedGuess = document.getElementById("selectedGuess");
 const actualAnswer = document.getElementById("actualAnswer");
 const resultText = document.getElementById("resultText");
 
+const toggleStatusBtn = document.getElementById("toggleStatusBtn");
+const statusDetails = document.getElementById("statusDetails");
+
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
@@ -44,8 +47,29 @@ function updateDisplayValues() {
   gapDurationValue.textContent = gapDuration.value;
 }
 
+function showStatusDetails() {
+  if (statusDetails.classList.contains("hidden")) {
+    statusDetails.classList.remove("hidden");
+    toggleStatusBtn.textContent = "상태 숨기기";
+  }
+}
+
+function hideStatusDetails() {
+  statusDetails.classList.add("hidden");
+  toggleStatusBtn.textContent = "상태 보기";
+}
+
+function toggleStatusDetails() {
+  if (statusDetails.classList.contains("hidden")) {
+    showStatusDetails();
+  } else {
+    hideStatusDetails();
+  }
+}
+
 function setStatus(text) {
   lastAction.textContent = text;
+  showStatusDetails();
 }
 
 function sleep(ms) {
@@ -122,15 +146,16 @@ async function playBeep(frequency, durationMs, peak = 0.95, type = "sine") {
     const durationSec = durationMs / 1000;
     const fadeIn = 0.01;
     const fadeOut = 0.03;
+    const safePeak = Math.max(0.0002, peak);
 
     osc.type = type;
     osc.frequency.setValueAtTime(frequency, now);
 
     gainNode.gain.setValueAtTime(0.0001, now);
-    gainNode.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), now + fadeIn);
+    gainNode.gain.exponentialRampToValueAtTime(safePeak, now + fadeIn);
 
     const sustainEnd = Math.max(now + fadeIn + 0.01, now + durationSec - fadeOut);
-    gainNode.gain.setValueAtTime(Math.max(0.0002, peak), sustainEnd);
+    gainNode.gain.setValueAtTime(safePeak, sustainEnd);
     gainNode.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
 
     osc.connect(gainNode);
@@ -277,15 +302,26 @@ function resetAll() {
   setStatus("초기화 완료");
 }
 
-freq.addEventListener("input", updateDisplayValues);
+freq.addEventListener("input", () => {
+  updateDisplayValues();
+  setStatus("주파수 슬라이더 조정: " + Number(freq.value).toLocaleString() + "Hz");
+});
 
 volume.addEventListener("input", () => {
   updateDisplayValues();
   updateMasterVolume();
+  setStatus("볼륨 조정: " + volume.value + "%");
 });
 
-beepDuration.addEventListener("input", updateDisplayValues);
-gapDuration.addEventListener("input", updateDisplayValues);
+beepDuration.addEventListener("input", () => {
+  updateDisplayValues();
+  setStatus("비프 길이 조정: " + beepDuration.value + "ms");
+});
+
+gapDuration.addEventListener("input", () => {
+  updateDisplayValues();
+  setStatus("비프 간격 조정: " + gapDuration.value + "ms");
+});
 
 presetButtons.forEach(button => {
   button.addEventListener("click", () => {
@@ -313,6 +349,7 @@ testToneBtn.addEventListener("click", playTestTone);
 playRandomBtn.addEventListener("click", playRandomSequence);
 revealAnswerBtn.addEventListener("click", revealAnswer);
 resetBtn.addEventListener("click", resetAll);
+toggleStatusBtn.addEventListener("click", toggleStatusDetails);
 
 updateDisplayValues();
-setStatus("대기 중");
+hideStatusDetails();
