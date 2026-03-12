@@ -1,0 +1,114 @@
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>청각나이 테스트</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <h1>청각나이 테스트 <span>🎧</span></h1>
+      <p>
+        원하는 주파수를 정한 뒤 랜덤 비프를 재생해 보세요.<br>
+        몇 번 들렸는지 맞혀서, 우연한 찍기를 줄일 수 있습니다.
+      </p>
+    </header>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>주파수 설정</h2>
+        <div class="big-value"><span id="freqValue">12000</span> Hz</div>
+      </div>
+
+      <input
+        id="freq"
+        type="range"
+        min="20"
+        max="20000"
+        step="1"
+        value="12000"
+      >
+
+      <div class="step-grid">
+        <button type="button" class="step-btn" data-step="-1000">-1000Hz</button>
+        <button type="button" class="step-btn" data-step="-500">-500Hz</button>
+        <button type="button" class="step-btn" data-step="500">+500Hz</button>
+        <button type="button" class="step-btn" data-step="1000">+1000Hz</button>
+      </div>
+
+      <div class="preset-grid">
+        <button type="button" class="preset-btn" data-freq="1000">1kHz</button>
+        <button type="button" class="preset-btn" data-freq="4000">4kHz</button>
+        <button type="button" class="preset-btn" data-freq="8000">8kHz</button>
+        <button type="button" class="preset-btn" data-freq="12000">12kHz</button>
+        <button type="button" class="preset-btn" data-freq="15000">15kHz</button>
+        <button type="button" class="preset-btn" data-freq="17000">17kHz</button>
+        <button type="button" class="preset-btn" data-freq="19000">19kHz</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="setting-row">
+        <label for="volume">볼륨</label>
+        <strong><span id="volumeValue">20</span>%</strong>
+      </div>
+      <input id="volume" type="range" min="1" max="100" step="1" value="20">
+
+      <div class="setting-row">
+        <label for="beepDuration">비프 길이</label>
+        <strong><span id="beepDurationValue">220</span> ms</strong>
+      </div>
+      <input id="beepDuration" type="range" min="80" max="1000" step="10" value="220">
+
+      <div class="setting-row">
+        <label for="gapDuration">비프 간격</label>
+        <strong><span id="gapDurationValue">350</span> ms</strong>
+      </div>
+      <input id="gapDuration" type="range" min="100" max="1500" step="10" value="350">
+    </section>
+
+    <section class="panel">
+      <div class="button-row">
+        <button type="button" id="initAudioBtn" class="primary">오디오 준비</button>
+        <button type="button" id="testToneBtn">1kHz 테스트음</button>
+        <button type="button" id="playRandomBtn" class="accent">랜덤 비프 재생</button>
+      </div>
+
+      <div class="guess-box">
+        <h3>몇 번 들렸나요?</h3>
+        <div class="guess-row">
+          <button type="button" class="guess-btn" data-guess="1">1회</button>
+          <button type="button" class="guess-btn" data-guess="2">2회</button>
+          <button type="button" class="guess-btn" data-guess="3">3회</button>
+          <button type="button" class="guess-btn" data-guess="4">4회</button>
+          <button type="button" class="guess-btn" data-guess="5">5회</button>
+        </div>
+
+        <div class="button-row bottom-row">
+          <button type="button" id="revealAnswerBtn">정답 보기</button>
+          <button type="button" id="resetBtn">초기화</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel status-panel">
+      <div class="status-item"><span>오디오 상태</span><strong id="audioStatus">준비 전</strong></div>
+      <div class="status-item"><span>마지막 동작</span><strong id="lastAction">대기 중</strong></div>
+      <div class="status-item"><span>선택한 답</span><strong id="selectedGuess">없음</strong></div>
+      <div class="status-item"><span>실제 정답</span><strong id="actualAnswer">숨김</strong></div>
+      <div class="status-item"><span>판정</span><strong id="resultText">아직 없음</strong></div>
+    </section>
+
+    <section class="notice">
+      <strong>주의</strong>
+      <p>
+        처음에는 볼륨을 낮게 시작하세요. 고주파는 기기 성능, 스피커/이어폰 특성,
+        그리고 개인 청력에 따라 차이가 큽니다. 이 도구는 체험용이며 의학적 검사 도구가 아닙니다.
+      </p>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
