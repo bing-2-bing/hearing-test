@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -93,11 +94,35 @@
     </section>
 
     <section class="panel status-panel">
-      <div class="status-item"><span>오디오 상태</span><strong id="audioStatus">준비 전</strong></div>
-      <div class="status-item"><span>마지막 동작</span><strong id="lastAction">대기 중</strong></div>
-      <div class="status-item"><span>선택한 답</span><strong id="selectedGuess">없음</strong></div>
-      <div class="status-item"><span>실제 정답</span><strong id="actualAnswer">숨김</strong></div>
-      <div class="status-item"><span>판정</span><strong id="resultText">아직 없음</strong></div>
+      <div class="status-top">
+        <div class="status-item">
+          <span>오디오 상태</span>
+          <strong id="audioStatus">준비 전</strong>
+        </div>
+
+        <button type="button" id="toggleStatusBtn" class="toggle-status-btn">
+          상태 보기
+        </button>
+      </div>
+
+      <div id="statusDetails" class="status-details hidden">
+        <div class="status-item">
+          <span>마지막 동작</span>
+          <strong id="lastAction">대기 중</strong>
+        </div>
+        <div class="status-item">
+          <span>선택한 답</span>
+          <strong id="selectedGuess">없음</strong>
+        </div>
+        <div class="status-item">
+          <span>실제 정답</span>
+          <strong id="actualAnswer">숨김</strong>
+        </div>
+        <div class="status-item">
+          <span>판정</span>
+          <strong id="resultText">아직 없음</strong>
+        </div>
+      </div>
     </section>
 
     <section class="notice">
