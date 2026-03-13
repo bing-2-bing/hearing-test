@@ -3,6 +3,7 @@ let masterGain = null;
 let randomCount = null;
 let chosenGuess = null;
 let isPlaying = false;
+let testedFrequency = null;
 
 const MIN_FREQ = 20;
 const MAX_FREQ = 20000;
@@ -32,6 +33,7 @@ const lastAction = document.getElementById("lastAction");
 const selectedGuess = document.getElementById("selectedGuess");
 const actualAnswer = document.getElementById("actualAnswer");
 const resultText = document.getElementById("resultText");
+const ageEstimate = document.getElementById("ageEstimate");
 
 const toggleStatusBtn = document.getElementById("toggleStatusBtn");
 const statusDetails = document.getElementById("statusDetails");
@@ -70,6 +72,30 @@ function toggleStatusDetails() {
 function setStatus(text) {
   lastAction.textContent = text;
   showStatusDetails();
+}
+
+function estimateAgeBandByFrequency(frequency) {
+  const rules = [
+    { min: 18000, label: "어린이 (18,000~20,000Hz 이상)" },
+    { min: 17000, label: "10대~20대 초반 (17,000~20,000Hz)" },
+    { min: 15000, label: "20대 후반~30대 (15,000~17,000Hz)" },
+    { min: 13000, label: "40대 (13,000~15,000Hz)" },
+    { min: 10000, label: "50대 (10,000~12,000Hz)" },
+    { min: 8000, label: "60대 이상 (8,000~10,000Hz 안팎)" }
+  ];
+
+  const matched = rules.find(rule => frequency >= rule.min);
+  return matched ? matched.label : "60대 이상 범위보다 낮음 (개인·환경 차이 큼)";
+}
+
+function updateAgeEstimateText() {
+  if (randomCount === null) {
+    ageEstimate.textContent = "아직 측정 전";
+    return;
+  }
+
+  const heardFrequency = testedFrequency ?? Number(freq.value);
+  ageEstimate.textContent = `${estimateAgeBandByFrequency(heardFrequency)} · 기준 ${heardFrequency.toLocaleString()}Hz`;
 }
 
 function sleep(ms) {
@@ -116,6 +142,7 @@ function resetResultView() {
   selectedGuess.textContent = "없음";
   actualAnswer.textContent = "숨김";
   resultText.textContent = "아직 없음";
+  ageEstimate.textContent = "아직 측정 전";
   clearGuessStyles();
 }
 
@@ -215,6 +242,7 @@ async function playRandomSequence() {
     resetResultView();
 
     const currentFreq = Number(freq.value);
+    testedFrequency = currentFreq;
     const currentBeepDuration = Number(beepDuration.value);
     const currentGapDuration = Number(gapDuration.value);
 
@@ -257,6 +285,7 @@ async function revealAnswer() {
   }
 
   actualAnswer.textContent = randomCount + "회";
+  updateAgeEstimateText();
 
   guessButtons.forEach(button => {
     const buttonValue = Number(button.dataset.guess);
@@ -273,13 +302,13 @@ async function revealAnswer() {
 
   if (chosenGuess === null) {
     resultText.textContent = "답을 선택하지 않음";
-    setStatus("정답 공개");
+    setStatus("정답 공개 · 추정 가청 연령대 반영");
     return;
   }
 
   if (chosenGuess === randomCount) {
     resultText.textContent = "정답";
-    setStatus("정답 공개: 정답");
+    setStatus("정답 공개: 정답 · 추정 가청 연령대 반영");
     try {
       await playCorrectSound();
     } catch (error) {
@@ -287,7 +316,7 @@ async function revealAnswer() {
     }
   } else {
     resultText.textContent = "오답";
-    setStatus("정답 공개: 오답");
+    setStatus("정답 공개: 오답 · 추정 가청 연령대 반영");
     try {
       await playWrongSound();
     } catch (error) {
@@ -298,6 +327,7 @@ async function revealAnswer() {
 
 function resetAll() {
   randomCount = null;
+  testedFrequency = null;
   resetResultView();
   setStatus("초기화 완료");
 }
